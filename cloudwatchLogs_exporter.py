@@ -1,4 +1,4 @@
-import boto3
+import boto
 import collections
 from datetime import datetime, date, time, timedelta
 
