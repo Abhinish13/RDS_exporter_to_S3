@@ -9,7 +9,7 @@ def exporter():
     yesterday = datetime.combine(date.today() - timedelta(1), time())
     today = datetime.combine(date.today(), time())
     unix_start = datetime(1970, 1, 1)
-    client = boto3.client("logs", region_name=region)
+    client = boto.client("logs", region_name=region)
     response = client.create_export_task(
         taskName="Export_CloudwatchLogs_{}".format(today),
         logGroupName="/aws/rds/instance/perf-masterdb/audit",
