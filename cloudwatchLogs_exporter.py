@@ -1,8 +1,12 @@
 import boto3
 import collections
-import sys, getopt
+import sys
+import getopt
 from datetime import datetime, date, time, timedelta
-
+import json
+# For Floor function call
+import math
+import time
 region = "us-east-2"
 
 
@@ -26,24 +30,72 @@ def main(argv):
 #    print 'Output file is "', outputfile
 
 def exporter(access,secret):
-    yesterday = datetime.combine(date.today() - timedelta(1), time())
-    today = datetime.combine(date.today(), time())
-    unix_start = datetime(1970, 1, 1)
+   # yesterday = datetime.combine(date.today() - timedelta(1), time())
+    #today = datetime.combine(date.today(), time())
+    #unix_start = datetime(1970, 1, 1)
+    # Defination of N i.e. How many day the logs will be there in the Cloudwatch
+    nDays = 0
+    # Declaration of the Deletion date which will be used to delete the cloudwatch logs
+    deletionDate = datetime.now() - timedelta(days=nDays)
+    # Print the deletionDate for confirmation of date
+    print(deletionDate)
+    # For deletionDate : replacing the time for deleting the cloudwatch
+    # Start of Day: Begining of the day i.e 00:00:00:0000 Time at DeletionDate
+    startOfDay = deletionDate.replace(
+        hour=0, minute=0, second=0, microsecond=0)
+    # End of Dat : Ending of the day i.e. 23:59:59:9999999 Time at DeletionDate
+    endOfDay = deletionDate.replace(
+        hour=23, minute=59, second=59, microsecond=999999)
+    # Log group of AWS resource which will be deleted is stored to variable group_name
+    # It a list to delete multiple Logs group
+    logGroupName = "/aws/rds/instance/perf-masterdb/audit"
+
+    destinationS3 = "cloudwatchlogs-db-audit"
+    destinationS3Prefix = "db_logs"
     client = boto3.client("logs", region_name=region,aws_access_key_id=access, 
                       aws_secret_access_key=secret)
     response = client.create_export_task(
-        taskName="Export_CloudwatchLogs_{}".format(today),
-        logGroupName="/aws/rds/instance/perf-masterdb/audit",
-        fromTime=int((yesterday - unix_start).total_seconds() * 1000),
-        to=int((today - unix_start).total_seconds() * 1000),
-        destination="cloudwatchlogs-db-audit",
-        destinationPrefix="db_logs",
+        taskName="Export_CloudwatchLogs_{}".format(datetime.now()),
+        logGroupName=logGroupName,
+        fromTime=math.floor(startOfDay.timestamp() * 1000),
+        to=math.floor(endOfDay.timestamp() * 1000),
+        destination=destinationS3,
+        destinationPrefix=destinationS3Prefix,
     )
     print(
         "Response from export task at {} :\n{}".format(
             datetime.now().isoformat(), response
         )
     )
+    response = client.put_retention_policy(
+        logGroupName=logGroupName,
+        # Function call for RetentionInDays(1) nDays = 1
+        retentionInDays=retention_days(nDays),
+    )
+
+def retention_days(n):
+    retentionInDays = [
+        1,
+        3,
+        5,
+        7,
+        14,
+        30,
+        60,
+        90,
+        120,
+        150,
+        180,
+        365,
+        400,
+        545,
+        731,
+        1827,
+        3653,
+    ]
+    for retention_day in retentionInDays:
+        if n < retention_day:
+            return retention_day
 
 
 if __name__ == "__main__":
