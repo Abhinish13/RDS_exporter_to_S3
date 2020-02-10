@@ -1,9 +1,10 @@
+# for Manupulating the AWS resources
 import boto3
 import collections
-import sys
-import getopt
-from datetime import datetime, date, time, timedelta
-import json
+
+# For date time manupulation for deletionDate
+from datetime import datetime, timedelta
+
 # For Floor function call
 import math
 import time
