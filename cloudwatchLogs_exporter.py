@@ -5,11 +5,10 @@ import sys
 import getopt
 import json
 # For date time manupulation for deletionDate
-from datetime import datetime, timedelta
+from datetime import datetime, date, time, timedelta
 
 # For Floor function call
 import math
-import time
 region = "us-east-2"
 
 
@@ -58,13 +57,11 @@ def exporter(access,secret):
     destinationS3Prefix = "db_logs"
     client = boto3.client("logs", region_name=region,aws_access_key_id=access, 
                       aws_secret_access_key=secret)
-      dt = datetime.now()
-      timestamp = time.mktime(dt.timetuple()) + dt.microsecond/1e6
     response = client.create_export_task(
         taskName="Export_CloudwatchLogs_{}".format(datetime.now()),
         logGroupName=logGroupName,
-        fromTime = int((startOfDay).total_seconds() * 1000)
-        to = int((endOfDay).total_seconds() * 1000)
+        fromTime = int((startOfDay).total_seconds() * 1000),
+        to = int((endOfDay).total_seconds() * 1000),
         destination=destinationS3,
         destinationPrefix=destinationS3Prefix,
     )
