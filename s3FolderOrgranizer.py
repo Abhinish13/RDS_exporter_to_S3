@@ -8,11 +8,11 @@ from s3Buck_Poli_Editor import S3PolicyEditor
 def s3FolderOrganizer(dateStamp):
     path = pathlib.Path().absolute()
     print(path)
-    fileName = "info"
-    filePath = os.path.join(path, fileName)
+    fileName = './info'
+    #filePath = os.path.join(path, fileName)
     # Start Date and End Date for info
 
-    infoFile = open(filePath, "w+")
+    infoFile = open(fileName, "w+")
     infoFile.write(
         "This folder is Created by Jenkins\nThis folder contains the CloudWatch logs\nDate of Logs : {}".format(
             dateStamp.date()
@@ -24,7 +24,7 @@ def s3FolderOrganizer(dateStamp):
     folderName = str(month_Name)+"/" + str(dateStamp.date())
     keyValue = folderName + "/" + fileName
     s3_client = boto3.client("s3")
-    with open(filePath) as file:
+    with open(fileName) as file:
         object = file.read()
         s3_client.put_object(
             Body=object,
