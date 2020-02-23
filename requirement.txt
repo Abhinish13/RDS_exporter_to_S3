@@ -10,3 +10,4 @@ s3transfer==0.3.2
 six==1.14.0
 urllib3==1.25.8
 zope.interface==4.7.1
+pathlib==1.0.1
