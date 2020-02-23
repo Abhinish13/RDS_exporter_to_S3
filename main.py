@@ -4,7 +4,7 @@ import collections
 import sys
 import getopt
 import json
-from cloudWatchLogs_exporter import exporter
+from cloudwatchLogs_exporter import exporter
 # For date time manupulation for deletionDate
 from datetime import datetime, date, time, timedelta
 
