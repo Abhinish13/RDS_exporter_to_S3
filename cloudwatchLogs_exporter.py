@@ -52,7 +52,7 @@ def exporter(access, secret):
     )
     print(
         "Response from export task at {} :\n{}".format(
-            datetime.now().isoformat(), response
+            datetime.now().isoformat(), json.dumps(response, indent=4, sort_keys=True)
         )
     )
     response = client.put_retention_policy(

@@ -37,7 +37,8 @@ def S3PolicyEditor(folderName, s3_client):
     s3_client.put_bucket_policy(Bucket=BUCKET_NAME, Policy=bucket_policy)
 
     result = s3_client.get_bucket_policy(Bucket=BUCKET_NAME)
-    print(result["Policy"])
+    print("S3 Bucket Policy :\n {}".format(
+        json.dumps(result["Policy"], indent=4, sort_keys=True)))
 
 # Set the new policy
 # s3 = boto3.client("s3")
