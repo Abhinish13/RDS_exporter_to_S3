@@ -39,6 +39,7 @@ def exporter(access, secret):
                              aws_secret_access_key=secret)
     destinationS3 = "cloudwatchlogs-db-ind-master"
     destinationS3Prefix = s3FolderOrganizer(deletionDate, s3_client)
+    print("S3 bucket Folder Name : {}\n".format(destinationS3Prefix))
     client = boto3.client("logs", region_name=region, aws_access_key_id=access,
                           aws_secret_access_key=secret)
 
