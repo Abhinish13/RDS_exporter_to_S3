@@ -1,34 +1,16 @@
-# for Manupulating the AWS resources
+
 import boto3
 import collections
 import sys
 import getopt
 import json
+from retention_policy_setter import retention_days
+from s3FolderOrgranizer import s3FolderOrganizer
 # For date time manupulation for deletionDate
 from datetime import datetime, date, time, timedelta
-
 # For Floor function call
 import math
-region = "us-east-2"
-
-
-def main(argv):
-    try:
-        opts, args = getopt.getopt(argv, "hs:a:", ["secret=", "access="])
-    except getopt.GetoptError:
-
-        sys.exit(2)
-    for opt, arg in opts:
-        if opt == '-h':
-            print('Invalid Secret Key and Access Key')
-            sys.exit()
-        elif opt in ("-s", "--secret"):
-            secret = arg
-        elif opt in ("-a", "--access"):
-            access = arg
-    exporter(access, secret)
-#    print 'Input file is "', inputfile
-#    print 'Output file is "', outputfile
+region = "ap-south-1"
 
 
 def exporter(access, secret):
@@ -36,7 +18,7 @@ def exporter(access, secret):
     #today = datetime.combine(date.today(), time())
     #unix_start = datetime(1970, 1, 1)
     # Defination of N i.e. How many day the logs will be there in the Cloudwatch
-    nDays = 0
+    nDays = 14
     # Declaration of the Deletion date which will be used to delete the cloudwatch logs
     deletionDate = datetime.now() - timedelta(days=nDays)
     # Print the deletionDate for confirmation of date
@@ -51,10 +33,11 @@ def exporter(access, secret):
         hour=23, minute=59, second=59, microsecond=999999) - unix_start
     # Log group of AWS resource which will be deleted is stored to variable group_name
     # It a list to delete multiple Logs group
-    logGroupName = "/aws/rds/instance/perf-masterdb/audit"
+    logGroupName = "/aws/rds/instance/ind-master-db/audit"
+    # Call of function
 
-    destinationS3 = "cloudwatchlogs-db-audit"
-    destinationS3Prefix = "db_logs"
+    destinationS3 = "cloudwatchlogs-db-ind-master"
+    destinationS3Prefix = s3FolderOrganizer(deletionDate)
     client = boto3.client("logs", region_name=region, aws_access_key_id=access,
                           aws_secret_access_key=secret)
     response = client.create_export_task(
@@ -75,32 +58,3 @@ def exporter(access, secret):
         # Function call for RetentionInDays(1) nDays = 1
         retentionInDays=retention_days(nDays),
     )
-
-
-def retention_days(n):
-    retentionInDays = [
-        1,
-        3,
-        5,
-        7,
-        14,
-        30,
-        60,
-        90,
-        120,
-        150,
-        180,
-        365,
-        400,
-        545,
-        731,
-        1827,
-        3653,
-    ]
-    for retention_day in retentionInDays:
-        if n < retention_day:
-            return retention_day
-
-
-if __name__ == "__main__":
-    main(sys.argv[1:])
