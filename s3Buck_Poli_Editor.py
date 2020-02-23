@@ -2,10 +2,10 @@ import json
 import boto3
 
 
-def S3PolicyEditor(folderName):
+def S3PolicyEditor(folderName, s3_client):
     BUCKET_NAME = "cloudwatchlogs-db-ind-master"
     # Retrieve the policy of the specified bucket
-    s3 = boto3.client("s3")
+    #s3 = boto3.client("s3")
 
     # Create a bucket policy
     Resource = "arn:aws:s3:::cloudwatchlogs-db-ind-master/{0}/*".format(
@@ -34,9 +34,9 @@ def S3PolicyEditor(folderName):
     # Convert the policy from JSON dict to string
     bucket_policy = json.dumps(bucket_policy)
 
-    s3.put_bucket_policy(Bucket=BUCKET_NAME, Policy=bucket_policy)
+    s3_client.put_bucket_policy(Bucket=BUCKET_NAME, Policy=bucket_policy)
 
-    result = s3.get_bucket_policy(Bucket=BUCKET_NAME)
+    result = s3_client.get_bucket_policy(Bucket=BUCKET_NAME)
     print(result["Policy"])
 
 # Set the new policy

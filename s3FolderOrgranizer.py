@@ -5,7 +5,7 @@ from datetime import datetime, date, time
 from s3Buck_Poli_Editor import S3PolicyEditor
 
 
-def s3FolderOrganizer(dateStamp):
+def s3FolderOrganizer(dateStamp, s3_client):
     path = pathlib.Path().absolute()
     print(path)
     fileName = './info'
@@ -23,7 +23,7 @@ def s3FolderOrganizer(dateStamp):
     # BucketDetails
     folderName = str(month_Name)+"/" + str(dateStamp.date())
     keyValue = folderName + "/" + fileName
-    s3_client = boto3.client("s3")
+    #s3_client = boto3.client("s3")
     with open(fileName) as file:
         object = file.read()
         s3_client.put_object(
@@ -34,7 +34,7 @@ def s3FolderOrganizer(dateStamp):
             ContentEncoding="utf-8",
             StorageClass="STANDARD",
         )
-    S3PolicyEditor(folderName)
+    S3PolicyEditor(folderName, s3_client)
     return folderName
 
 # arn: aws: s3: : : cloudwatchlogs-db-ind-master

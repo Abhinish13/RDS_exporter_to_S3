@@ -35,11 +35,13 @@ def exporter(access, secret):
     # It a list to delete multiple Logs group
     logGroupName = "/aws/rds/instance/ind-master-db/audit"
     # Call of function
-
+    s3_client = boto3.client("s3",  region_name=region, aws_access_key_id=access,
+                             aws_secret_access_key=secret)
     destinationS3 = "cloudwatchlogs-db-ind-master"
-    destinationS3Prefix = s3FolderOrganizer(deletionDate)
+    destinationS3Prefix = s3FolderOrganizer(deletionDate, s3_client)
     client = boto3.client("logs", region_name=region, aws_access_key_id=access,
                           aws_secret_access_key=secret)
+
     response = client.create_export_task(
         taskName="Export_CloudwatchLogs_{}".format(datetime.now()),
         logGroupName=logGroupName,
