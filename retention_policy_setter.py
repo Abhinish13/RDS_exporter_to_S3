@@ -20,5 +20,5 @@ def retention_days(n):
         3653,
     ]
     for retention_day in retentionInDays:
-        if n < retention_day:
+        if n <= retention_day:
             return retention_day
