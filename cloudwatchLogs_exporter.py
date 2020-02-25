@@ -18,7 +18,7 @@ def exporter(access, secret):
     #today = datetime.combine(date.today(), time())
     #unix_start = datetime(1970, 1, 1)
     # Defination of N i.e. How many day the logs will be there in the Cloudwatch
-    nDays = 14
+    nDays = 0
     # Declaration of the Deletion date which will be used to delete the cloudwatch logs
     deletionDate = datetime.now() - timedelta(days=nDays)
     # Print the deletionDate for confirmation of date
