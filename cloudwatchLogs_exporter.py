@@ -26,10 +26,10 @@ def exporter(access, secret):
     # For deletionDate : replacing the time for deleting the cloudwatch
     # Start of Day: Begining of the day i.e 00:00:00:0000 Time at DeletionDate
     unix_start = datetime(1970, 1, 1)
-    startOfDay = datetime.combine(date.today(), time()).replace(
+    startOfDay = datetime.combine(deletionDate, time()).replace(
         hour=00, minute=00, second=00, microsecond=000000) - unix_start
     # End of Dat : Ending of the day i.e. 23:59:59:9999999 Time at DeletionDate
-    endOfDay = datetime.combine(date.today(), time()).replace(
+    endOfDay = datetime.combine(deletionDate, time()).replace(
         hour=23, minute=59, second=59, microsecond=999999) - unix_start
     # Log group of AWS resource which will be deleted is stored to variable group_name
     # It a list to delete multiple Logs group
