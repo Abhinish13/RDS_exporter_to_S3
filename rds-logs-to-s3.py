@@ -56,6 +56,12 @@ def parse_args(args):
 		elif arg == "--region" and i + 1 < len(args):
 		config['Region'] = args[i + 1]
 			i += 1
+        elif arg == "--accesskey" and i + 1 < len(args):
+        config['AccessKey'] = args[i + 1]
+            i += 1
+        elif arg == "--secretkey" and i + 1 < len(args):
+		config['SecretKey'] = args[i + 1]
+			i += 1
 		else:
 			print("ERROR: Invalid command line argument " + arg + "/ No value specified")
 			print_usage()
@@ -81,7 +87,7 @@ def copy_logs_from_RDS_to_S3():
 	global config
 
 	# get settings from the config
-	if {'BucketName', 'RDSInstanceName', 'Region'}.issubset(config):
+	if {'BucketName', 'RDSInstanceName', 'Region', 'AccessKey', 'SecretKey'}.issubset(config):
 	S3BucketName = config['BucketName']
 		RDSInstanceName = config['RDSInstanceName']
 		region = config['Region']
@@ -90,14 +96,18 @@ def copy_logs_from_RDS_to_S3():
 		else:
 		logNamePrefix = ""
 		configFileName = RDSInstanceName + "/" + "backup_config"
+        access = config['AccessKey']
+        secret = config['SecretKey']
 	else:
 	print("ERROR: Values for the required field not specified")
 		print_usage()
 		return
 
 	# initialize
-	RDSclient = boto3.client('rds', region_name=region)
-	S3client = boto3.client('s3', region_name=region)
+	RDSclient = boto3.client('rds', region_name=region, aws_access_key_id=access,
+                          aws_secret_access_key=secret)
+	S3client = boto3.client('s3', region_name=region, aws_access_key_id=access,
+                         aws_secret_access_key=secret)
 	lastWrittenTime = 0
 	lastWrittenThisRun = 0
 	backupStartTime = datetime.now()
