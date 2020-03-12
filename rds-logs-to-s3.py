@@ -42,9 +42,8 @@ def parse_args(args):
 	global config
 	i = 1
 	while i < len(args):
-	arg = args[i]
-
-		if arg == "--bucketname" and i + 1 < len(args):
+        arg = args[i]
+        if arg == "--bucketname" and i + 1 < len(args):
 		config['BucketName'] = args[i + 1]
 			i += 1
 		elif arg == "--rdsinstancename" and i + 1 < len(args):
